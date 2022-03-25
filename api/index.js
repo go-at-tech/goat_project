@@ -20,6 +20,60 @@ app.get("/api/status", (req, res, next) => {
   res.send("active");
 });
 
+app.get("/api/islem0", (req, res, next) => {
+  MongoClient.connect(URL, (err, client) => {
+    if (err) throw err;
+  
+    const db = client.db('chtbt_wp');
+    let sorgu = {};
+    db.collection('messages').find({islem:0}).toArray(function(err, result) {
+      if (err) throw err;
+      console.log(result);
+      
+    
+  res.send({
+    message: result
+  });
+ 
+    });
+  
+  });
+});
+
+app.get("/api/test/:type?/:tel?/:body?", (req, res, next) => {
+ 
+  MongoClient.connect(URL, (err, clientx) => {
+    if (err) throw err;
+  
+    const db = clientx.db('chtbt_wp');
+    /*
+    db.createCollection('messages', (err, result) => {
+      if (err) throw err;
+      console.log('Koleksiyon oluşturuldu.');
+      client.close();
+    });
+    */
+    let veri = {
+      type: req.params.type,
+      tel: req.params.tel,
+      body: req.params.body,
+      
+  
+  
+      
+      };
+    db.collection('send_message').insertOne(veri, (err, result) => {
+      if (err) throw err;
+      console.log('--Insert--')
+      console.log(veri);
+      res.send(veri);
+     
+      //clientx.close();
+    });
+    
+  });
+});
+
 //parametre alıp json dönmek istersek.
 app.get("/api/allmessages/:name?", (req, res, next) => {
   MongoClient.connect(URL, (err, client) => {
