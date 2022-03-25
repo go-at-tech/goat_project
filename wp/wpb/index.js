@@ -1,7 +1,8 @@
 const express = require("express");
 const { getRandomSentence, getResponseInterval } = require("./utils");
-
-const PORT = process.env.PORT || 5000;
+const MongoClient = require('mongodb').MongoClient;
+const URL = 'mongodb://localhost:27017';
+const PORT = process.env.PORT || 6000;
 const app = express();
 const server = app.listen(PORT, () => console.log("Server running..."));
 
@@ -11,22 +12,41 @@ app.get("/", (req, res) => {
 	// Health Check
 	res.send("This service is up and running...");
 });
+MongoClient.connect(URL, (err, clientx) => {
+	if (err) throw err;
+  
+	const db = clientx.db('chtbt_wp');
 
-io.on("connection", (socket) => {
-	socket.on("fetch_response", (data) => {
-		const { userId } = data;
-		const responseInterval = getResponseInterval(1000, 4000);
-
-		setTimeout(() => {
-			socket.emit("start_typing", { userId });
-
-			setTimeout(() => {
-				socket.emit("stop_typing", { userId });
-				socket.emit("fetch_response", {
-					response: getRandomSentence(),
-					userId,
-				});
-			}, responseInterval);
+	io.on("connection", (socket) => {
+		setInterval(() => {
+			db.collection('send_message').find({}).toArray(function(err, result) {
+				if (err) throw err;
+				for(var i = 0; i<result.length;i++){
+					idsi = result[i]._id;
+					var tel = result[i].tel;
+					var body = result[i].body;
+					var type = result[i].type;
+					socket.emit("mesaj_at", {
+						tel: tel,
+						body:body,
+						type: type
+					});
+					console.log('Working item : ',idsi);
+					let sorgu = {_id:idsi};
+					db.collection('send_message').deleteOne(sorgu, (err, result) => {
+						if (err) throw err;
+						console.log('Deleted item : ',idsi);
+						
+					});
+				}
+			
+				
+			 
+			
+			});
+			
 		}, 1500);
 	});
+
+
 });

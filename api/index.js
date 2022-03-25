@@ -28,7 +28,7 @@ app.get("/api/islem0", (req, res, next) => {
     let sorgu = {};
     db.collection('messages').find({islem:0}).toArray(function(err, result) {
       if (err) throw err;
-      console.log(result);
+      console.log('Sonuc : ',result);
       
     
   res.send({

@@ -2,6 +2,7 @@ const { Client, Location, List, Buttons, LocalAuth } = require('./index');
 const MongoClient = require('mongodb').MongoClient;
 const URL = 'mongodb://localhost:27017';
 var qrcode = require('qrcode-terminal');
+var io = require('socket.io-client');
 
 MongoClient.connect(URL, (err, clientx) => {
   if (err) throw err;
@@ -43,7 +44,53 @@ client.on('auth_failure', msg => {
 
 client.on('ready', () => {
     console.log('READY');
+    /*
+    var idsi;
+db.collection('send_message').find({}).toArray(function(err, result) {
+    if (err) throw err;
+    for(var i = 0; i<result.length;i++){
+        idsi = result[i]._id;
+        var tel = result[i].tel;
+        var body = result[i].body;
+        client.sendMessage(tel, body);
+        let sorgu = {_id:idsi};
+        db.collection('send_message').deleteOne(sorgu, (err, result) => {
+            if (err) throw err;
+            console.log('Deleted item : ',idsi);
+            
+        });
+    }
+
+    
+ 
+
 });
+*/
+
+    
+});
+
+
+//Mesaj atma bölümü
+
+
+
+
+const socket = io.connect('http://localhost:6000', {reconnect: true});
+
+    
+
+// Add a connect listener
+socket.on('mesaj_at', function (socket) {
+    console.log(socket);
+    client.sendMessage(socket.tel, socket.body);
+
+    
+
+});
+
+//--- Mesaj atma bölümü bitiş---
+
 
 client.on('message', async msg => {
     console.log('MESSAGE RECEIVED', msg);
