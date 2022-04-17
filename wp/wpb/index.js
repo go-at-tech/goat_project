@@ -19,8 +19,10 @@ MongoClient.connect(URL, (err, clientx) => {
 
 	io.on("connection", (socket) => {
 		setInterval(() => {
+			
 			db.collection('send_message').find({}).toArray(function(err, result) {
 				if (err) throw err;
+				console.log('veri sayısı : ',result.length);
 				for(var i = 0; i<result.length;i++){
 					idsi = result[i]._id;
 					var tel = result[i].tel;
@@ -31,11 +33,11 @@ MongoClient.connect(URL, (err, clientx) => {
 						body:body,
 						type: type
 					});
-					console.log('Working item : ',idsi);
+					//console.log('Working item : ',idsi);
 					let sorgu = {_id:idsi};
 					db.collection('send_message').deleteOne(sorgu, (err, result) => {
 						if (err) throw err;
-						console.log('Deleted item : ',idsi);
+						//console.log('Deleted item : ',idsi);
 						
 					});
 				}
@@ -45,7 +47,7 @@ MongoClient.connect(URL, (err, clientx) => {
 			
 			});
 			
-		}, 1500);
+		}, 250);
 	});
 
 

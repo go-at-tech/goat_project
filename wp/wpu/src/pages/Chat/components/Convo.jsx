@@ -5,7 +5,7 @@ import formatTime from "utils/formatTime";
 
 const Convo = ({ lastMsgRef, messages: allMessages }) => {
 	const dates = Object.keys(allMessages);
-
+	
 	return dates.map((date, dateIndex) => {
 		const messages = allMessages[date];
 		return (
@@ -16,8 +16,7 @@ const Convo = ({ lastMsgRef, messages: allMessages }) => {
 				{dateIndex === 0 && (
 					<p className="chat__encryption-msg">
 						<Icon id="lock" className="chat__encryption-icon" />
-						Messages are end-to-end encrypted. No one outside of this chat, not
-						even WhatsApp, can read or listen to them. Click to learn more.
+						Mesajlar uçtan uca şifrelidir. WhatsApp da dahil olmak üzere bu sohbetin dışında bulunan hiç kimse mesajlarınızı okuyamaz ve dinleyemez
 					</p>
 				)}
 				<div className="chat__msg-group">
@@ -35,7 +34,7 @@ const Convo = ({ lastMsgRef, messages: allMessages }) => {
 										}`}
 										ref={assignRef()}
 									>
-										<img src={media} alt="" className="chat__img" />
+										<img src={message.content} alt="" className="chat__img" />
 										<span className="chat__msg-footer">
 											<span>{formatTime(message.time)}</span>
 											{!message.sender && (

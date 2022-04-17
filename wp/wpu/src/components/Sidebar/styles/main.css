@@ -64,14 +64,15 @@
 }
 
 .sidebar__alert-text:first-of-type {
+    
     font-size: 1rem;
     margin-bottom: 5px;
     color: #343738;
 }
 
 .sidebar__alert-text:last-of-type {
-    font-size: 0.85rem;
-    color: #414A4E;
+    font-size: 1rem;
+    color: #343738;
     line-height: 17px;
 }
 

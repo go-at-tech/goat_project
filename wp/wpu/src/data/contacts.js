@@ -6,8 +6,18 @@ import ppBoy1 from "assets/images/profile-picture-boy-1.jpeg";
 import ppBoy2 from "assets/images/profile-picture-boy-2.jpeg";
 import ppBoy3 from "assets/images/profile-picture-boy-3.jpeg";
 import getRandomSentence from "utils/getRandomSentence";
+import io from "socket.io-client";
+var userx = [];
+const SOCKET_URL = window.location.origin.includes("localhost")
+	? "http://localhost:6000"
+	: "https://whatsapp-web-clone-backend.herokuapp.com/";
 
-const users = [
+const socket = io.connect(SOCKET_URL);
+socket.on("users", (users) => {
+	console.log('geldi',users);
+	userx = users;
+  });
+/*const users = [
 	{
 		id: 1,
 		profile_picture: ppGirl3,
@@ -712,7 +722,7 @@ const users = [
 
 	{
 		id: 8,
-		profile_picture: ppGirl4,
+		profile_picture: 'https://cdn.pixabay.com/photo/2017/06/13/12/54/profile-2398783_1280.png',
 		name: "Beyoncé Knowles",
 		phone_number: "+2348123456789",
 		whatsapp_name: "Beyonce",
@@ -804,5 +814,6 @@ const users = [
 		typing: false,
 	},
 ];
+*/
 
-export default users;
+export default userx;

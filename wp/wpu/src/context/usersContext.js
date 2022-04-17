@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import contacts from "data/contacts";
 import { useSocketContext } from "./socketContext";
+import axios from 'axios';
 
 const UsersContext = createContext();
 
@@ -8,9 +9,23 @@ const useUsersContext = () => useContext(UsersContext);
 
 const UsersProvider = ({ children }) => {
 	const socket = useSocketContext();
+	
 
+	console.log('esli data : ',contacts);
+	/*
+	var contacts = '';
+	socket.on("users", (users) => {
+		contacts = users;
+	  });
+	  console.log(contacts);
+	*/
+	var path = window.location.pathname.split('/')[1];
+	var kisipath = window.location.pathname.split('/')[2];
+	  console.log('PATH : ',path);
+	  
 	const [users, setUsers] = useState(contacts);
-
+	
+	
 	const _updateUserProp = (userId, prop, value) => {
 		setUsers((users) => {
 			const usersCopy = [...users];
@@ -51,6 +66,23 @@ const UsersProvider = ({ children }) => {
 	};
 
 	useEffect(() => {
+		if(path == 'person'){
+			socket.on("wp", (wp) => {
+			console.log('VERİİİ',wp);
+			setUsers(wp);
+
+			
+		  });
+		}else{
+			socket.on("users", (users) => {
+				console.log('VERİİİ',users);
+				setUsers(users);
+			  });
+		}
+		
+
+		
+		
 		socket.on("fetch_response", fetchMessageResponse);
 		socket.on("start_typing", setUserAsTyping);
 		socket.on("stop_typing", setUserAsNotTyping);
@@ -61,19 +93,44 @@ const UsersProvider = ({ children }) => {
 	};
 
 	const addNewMessage = (userId, message) => {
+		console.log('USERIDSİ : ',userId);
 		let userIndex = users.findIndex((user) => user.id === userId);
 		const usersCopy = [...users];
 		const newMsgObject = {
 			content: message,
 			sender: null,
 			time: new Date().toLocaleTimeString(),
-			status: "delivered",
+			status: 'sent',
 		};
 
-		usersCopy[userIndex].messages.TODAY.push(newMsgObject);
-		setUsers(usersCopy);
+		var newDate = new Date();
+  
+		var ay = parseInt(newDate.getMonth())+1;
 
-		socket.emit("fetch_response", { userId });
+		var gunAyYil = newDate.getDate()+'/'+ay+'/'+newDate.getFullYear();
+		var zaman = newDate.getHours()+':'+newDate.getMinutes();
+        let veri = {
+            type: 'chat',
+            gonderen: '905'+userId.toString(),//msg.notifyName
+            alan: 'wp',//veya wp yada msg.to burda mesajı python işleme sokup wp ye döndüğünü görünce güncelleyerek wp yapmalı
+            message:message,
+            tarih:gunAyYil,
+            time:new Date().toLocaleTimeString(),
+            islem:1,
+            unread:0,
+			title:'1'
+        
+        
+            
+            };
+
+		
+			usersCopy[userIndex].messages.TODAY.push(newMsgObject);
+			setUsers(usersCopy);
+		console.log('MSGGGGGGG MSGGGGG',message);
+		if(message != ''){
+			socket.emit("wp_mesajat", veri);
+		}
 	};
 
 	return (

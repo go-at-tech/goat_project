@@ -7,7 +7,7 @@
 }
 
 .dark-theme .sidebar__alert--info {
-    background: #085373;
+    background: rgb(19, 28, 33);
 }
 
 .dark-theme .sidebar__alert--danger {
@@ -23,7 +23,8 @@
 }
 
 .dark-theme .sidebar__alert-text:last-of-type {
-    color: rgba(241, 241, 242, 0.75);
+    
+    color: rgba(241, 241, 242, 0.96);
 }
 
 .dark-theme .sidebar__alert--warning .sidebar__alert-text:first-of-type {

@@ -1,46 +1,29 @@
 import React from "react";
 import Icon from "components/Icon";
-
+var path = window.location.pathname.split('/')[1];
+var veri;
+var veri2;
+if(path == 'person'){
+	veri = '🤖 Chatbot';
+	veri2 = '👥 Müşteri Hizmetleri✔️';
+}else{
+	veri = '🤖 Chatbot✔️';
+	veri2 = '👥 Müşteri Hizmetleri';
+}
 const alerts = [
 	<div className="sidebar__alert sidebar__alert--info">
-		<div className="sidebar__alert-icon-wrapper">
-			<Icon id="notification" className="sidebar__alert-icon" />
-		</div>
+		
 		<div className="sidebar__alert-texts">
-			<p className="sidebar__alert-text"> Get notified of new messages </p>
-			<p className="sidebar__alert-text"> Turn on your notifications </p>
+			<a href='/chatbot'>
+			<p className="sidebar__alert-text">{veri} </p>
+			</a>
+			<a href="/person">
+			<p className="sidebar__alert-text">{veri2} </p>
+			</a>
+			
 		</div>
-	</div>,
-	<div className="sidebar__alert sidebar__alert--danger">
-		<div className="sidebar__alert-icon-wrapper">
-			<Icon id="notification" className="sidebar__alert-icon" />
-		</div>
-		<div className="sidebar__alert-texts">
-			<p className="sidebar__alert-text"> Phone battery low </p>
-			<p className="sidebar__alert-text">
-				Charge your phone to keep using Whatsapp.
-			</p>
-		</div>
-	</div>,
-	<div className="sidebar__alert sidebar__alert--warning">
-		<div className="sidebar__alert-icon-wrapper">
-			<Icon id="noWifi" className="sidebar__alert-icon" />
-		</div>
-		<div className="sidebar__alert-texts">
-			<p className="sidebar__alert-text"> Phone Not Connected</p>
-			<p className="sidebar__alert-text">
-				Make sure your phone has an active internet connection.{" "}
-				<a
-					className="underline"
-					href="https://faq.whatsapp.com/web/troubleshooting/cant-connect-to-whatsapp-web-or-desktop/"
-					target="_blank"
-				>
-					{" "}
-					Learn more.{" "}
-				</a>
-			</p>
-		</div>
-	</div>,
+	</div>
+	
 ];
 const randomAlert = alerts.sort(() => 0.5 - Math.random())[0];
 

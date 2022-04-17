@@ -17,15 +17,15 @@ const Home = () => {
 				/>
 			</div>
 
-			<h1 className="home__title"> Keep your phone connected </h1>
+			<h1 className="home__title"> Telefonunuzu bağlı tutun </h1>
 			<p className="home__text">
-				WhatsApp connects to your phone to sync messages. To reduce data usage,
-				connect your phone to Wi-Fi.
+			WhatsApp, mesajları senkronize etmek için telefonunuza bağlanır. Veri kullanımını azaltmak için, telefonunuzu Wi-Fi'ye bağlayın.
+
 			</p>
 			<p className="home__text">
 				<Icon id="laptop" className="home__icon" />
 				<span>
-					WhatsApp is available for Mac.{" "}
+					WhatsApp{" "}
 					<a
 						href="https://www.whatsapp.com/download"
 						target="_blank"
