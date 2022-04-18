@@ -82,10 +82,63 @@ const socket = io.connect('http://localhost:6000', {reconnect: true});
 
 // Add a connect listener
 socket.on('mesaj_at', function (socket) {
-    console.log(socket);
-    client.sendMessage(socket.tel, socket.body);
+    console.log('socket',socket);
+    if(socket.type == 'button'){
+        /*
+        var string = socket.body;
+        var dizi = []; 
+        
+        var arr = (new Function("return [" + string+ "];")());
+        //console.log(arr)
+        let modifiedArr = arr.map(function(element){
+            return element;
+        });
+        var bodysi = arr[0];
+        var title = arr[2];
+        var footer = arr[3];
+        //console.log(modifiedArr[1]);
+        modifiedArr[1].map(function(element){
+            dizi.push({body:element['body']});
+        });*/
 
-    
+        //let button = new Buttons(bodysi,dizi,title,footer);//seçiniz kısmına yeni parametre gönder response yolla
+
+        //answer ile body ters kaydettik 
+        var text = socket.answer;
+
+        var string = text.substr(1);
+                var string2 = string.substr(0,string.length-1);
+                var dizi = string2.split(", ");
+        var yenidizi = [];
+        dizi.map(function(element){
+                    var element = element.substr(1);
+                    var elem = element.substr(0,element.length-1);
+                    
+                    yenidizi.push({body:elem});
+                    console.log(yenidizi);
+                    
+                });
+        
+        //console.log(yenidizi);
+
+
+        let boton = new Buttons(socket.body,yenidizi,socket.title,socket.footer)
+        //let boton = new Buttons('Merhabalar, yardım almak istediğiniz butonu seçiniz.',[{body:'Ürün almak istiyorum'},{body:'Serviste cihazım var'},{body:'Ürün bende ama sorun yaşıyorum'},{body:'Reeder Sosyal'}],'Reeder Chatbot 🤖','')
+        //let botonx = new Buttons('.',[{body:'Reeder Sosyal'}],'','')
+
+        client.sendMessage(socket.tel+'@c.us', boton);
+       // client.sendMessage(socket.tel, botonx);
+    }else if(socket.type == 'chat'){
+        client.sendMessage(socket.tel+'@c.us',socket.body);
+    }else if(socket.type == 'image'){
+        //var media = new MessageMedia("image/png", _base64.data, "indir.png")
+    const media = MessageMedia.fromFilePath("2.jpg");
+
+
+    client.sendMessage('905313837735@c.us', media, { caption: 'Here\'s your requested media.' });
+    }
+
+   
 
 });
 
@@ -100,19 +153,87 @@ client.on('message', async msg => {
 
   var gunAyYil = newDate.getDate()+'/'+ay+'/'+newDate.getFullYear();
   var zaman = newDate.getHours()+':'+newDate.getMinutes();
-  
-  let veri = {
-    type: msg.type,
-    gonderen: msg.from,//msg.notifyName
-    alan: 'chatbot',//veya wp yada msg.to burda mesajı python işleme sokup wp ye döndüğünü görünce güncelleyerek wp yapmalı
-    message:msg.body,
-    tarih:gunAyYil,
-    time:zaman,
-    islem:0
+   //905077476450@c.us
+   const gonderen_numara = msg.from.split("@");
 
-
+    //db de mesaj atan son kişi chatbot ile konuştuysa chatbottan devam eğer wp ise ve 1 günü geçmediyse wp devam
+    let veri = {
+        type: msg.type,
+        gonderen: gonderen_numara[0],//msg.notifyName
+        alan: 'chatbot',//veya wp yada msg.to burda mesajı python işleme sokup wp ye döndüğünü görünce güncelleyerek wp yapmalı
+        message:msg.body,
+        tarih:gunAyYil,
+        time:zaman,
+        islem:0
     
-    };
+    
+        
+        };
+   const sort = { id: -1 };
+   const limit = 1;
+   const cursorn =  db.collection('messages').find({gonderen: gonderen_numara[0]}).sort(sort).limit(limit);
+   while (cursorn.hasNext()) {
+                                            
+    const docxx = await cursorn.next();
+    if(docxx.alan == 'chatbot'){
+        veri = {
+            type: msg.type,
+            gonderen: gonderen_numara[0],//msg.notifyName
+            alan: 'chatbot',//veya wp yada msg.to burda mesajı python işleme sokup wp ye döndüğünü görünce güncelleyerek wp yapmalı
+            message:msg.body,
+            tarih:gunAyYil,
+            time:zaman,
+            islem:0,
+            unread:0
+        
+        
+            
+            };
+
+    }else if (docxx.alan == 'wp'){
+        const myArraytarih = docxx.tarih.split("/");
+        var tarih1gun = myArraytarih[0];
+        var tarih1ay = myArraytarih[1];
+        var tarih1yil = myArraytarih[2];
+        var date1 = new Date(tarih1ay+'/'+tarih1gun+'/'+tarih1yil); //Verilen tarih
+        var date2 = new Date(); //Anlık zaman
+        var timeDiff = Math.abs(date1.getTime() - date2.getTime()); //İki tarihin integer farkı
+        var diffSecs = Math.ceil(timeDiff / 1000*60*60)%24; //Sonuç
+        if(diffSecs>24){
+            veri = {
+                type: msg.type,
+                gonderen: gonderen_numara[0],//msg.notifyName
+                alan: 'chatbot',//veya wp yada msg.to burda mesajı python işleme sokup wp ye döndüğünü görünce güncelleyerek wp yapmalı
+                message:msg.body,
+                tarih:gunAyYil,
+                time:zaman,
+                islem:0,
+                unread:0,
+            
+            
+                
+                };
+        }else{
+            veri = {
+                type: msg.type,
+                gonderen: gonderen_numara[0],//msg.notifyName
+                alan: 'wp',//veya wp yada msg.to burda mesajı python işleme sokup wp ye döndüğünü görünce güncelleyerek wp yapmalı
+                message:msg.body,
+                tarih:gunAyYil,
+                time:zaman,
+                islem:1,
+                unread:1,
+            
+            
+                
+                };
+        }
+       
+    }
+   }
+
+
+  
   db.collection('messages').insertOne(veri, (err, result) => {
     if (err) throw err;
     console.log('--Insert--')
@@ -180,7 +301,7 @@ client.on('message', async msg => {
         let chat = await msg.getChat();
         if (chat.isGroup) {
             msg.reply(`
-                *Group Details*
+                Group Details
                 Name: ${chat.name}
                 Description: ${chat.description}
                 Created At: ${chat.createdAt.toString()}
@@ -196,7 +317,7 @@ client.on('message', async msg => {
     } else if (msg.body === '!info') {
         let info = client.info;
         client.sendMessage(msg.from, `
-            *Connection info*
+            Connection info
             User name: ${info.pushname}
             My number: ${info.wid.user}
             Platform: ${info.platform}
@@ -204,7 +325,7 @@ client.on('message', async msg => {
     } else if (msg.body === '!mediainfo' && msg.hasMedia) {
         const attachmentData = await msg.downloadMedia();
         msg.reply(`
-            *Media info*
+            Media info
             MimeType: ${attachmentData.mimetype}
             Filename: ${attachmentData.filename}
             Data (length): ${attachmentData.data.length}
@@ -232,7 +353,7 @@ client.on('message', async msg => {
     } else if (msg.body.startsWith('!status ')) {
         const newStatus = msg.body.split(' ')[1];
         await client.setStatus(newStatus);
-        msg.reply(`Status was updated to *${newStatus}*`);
+        msg.reply(`Status was updated to ${newStatus}`);
     } else if (msg.body === '!mention') {
         const contact = await msg.getContact();
         const chat = await msg.getChat();

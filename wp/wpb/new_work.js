@@ -274,7 +274,7 @@ MongoClient.connect(URL, {
                                     var wp = [];
                                     //slice ile listelenmesi gereken chat sayısı
                                     docs = arr.slice(0, sayi);
-                                    if(cek_numara != undefined){
+                                    if(cek_numara != undefined && docs.length > 20){
                                         docs.push(cek_numara);
                                     }
                                     console.log('docs',docs);
